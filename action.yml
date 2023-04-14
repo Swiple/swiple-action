@@ -4,8 +4,11 @@ branding:
   icon: 'check-circle'
   color: 'green'
 inputs:
-  app_url:
-    description: 'The base URL for the API'
+  api_base_url:
+    description: 'The base URL for the Swiple API'
+    required: true
+  ui_base_url:
+    description: 'The base URL for the Swiple UI'
     required: true
   username:
     description: 'Username for API authentication'
@@ -35,7 +38,8 @@ runs:
         ./.venv/bin/python $GITHUB_ACTION_PATH/validate_dataset.py
       shell: bash
       env:
-        APP_URL: ${{ inputs.app_url }}
+        API_BASE_URL: ${{ inputs.api_base_url }}
+        UI_BASE_URL: ${{ inputs.ui_base_url }}
         USERNAME: ${{ inputs.username }}
         PASSWORD: ${{ inputs.password }}
         DATASET_ID: ${{ inputs.dataset_id }}

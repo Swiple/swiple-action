@@ -7,7 +7,8 @@ from github import Github
 from zoneinfo import ZoneInfo
 
 
-app_url = os.environ['APP_URL']
+api_base_url = os.environ['API_BASE_URL']
+ui_base_url = os.environ['UI_BASE_URL']
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
 dataset_id = os.environ['DATASET_ID']
@@ -18,7 +19,7 @@ session = requests.Session()
 
 
 def authenticate():
-    url = f"{app_url}/api/v1/auth/login"
+    url = f"{api_base_url}/api/v1/auth/login"
     data = {
         'grant_type': 'password',
         'username': username,
@@ -29,21 +30,21 @@ def authenticate():
 
 
 def get_dataset(key):
-    url = f"{app_url}/api/v1/datasets/{key}"
+    url = f"{api_base_url}/api/v1/datasets/{key}"
     response = session.get(url)
     response.raise_for_status()
     return response.json()
 
 
 def validate_dataset(key):
-    url = f"{app_url}/api/v1/datasets/{key}/validate"
+    url = f"{api_base_url}/api/v1/datasets/{key}/validate"
     response = session.post(url)
     response.raise_for_status()
     return response.json()['task_id']
 
 
 def get_task(task_id):
-    url = f"{app_url}/api/v1/tasks/{task_id}"
+    url = f"{api_base_url}/api/v1/tasks/{task_id}"
     response = session.get(url)
     response.raise_for_status()
     return response.json()
@@ -62,7 +63,7 @@ def poll_task_status(task_id):
 
 
 def get_validations(dataset_id):
-    url = f"{app_url}/api/v1/expectations?dataset_id={dataset_id}&include_history=true&enabled=true&asc=false"
+    url = f"{api_base_url}/api/v1/expectations?dataset_id={dataset_id}&include_history=true&enabled=true&asc=false"
     response = session.get(url)
     response.raise_for_status()
     return response.json()
@@ -163,7 +164,7 @@ def main():
     overview_table_row = f"|{engine}|{datasource_name}|{database}|{dataset_name}|{run_time}|"
     overview_table = overview_header + overview_table_row
 
-    view_in_swiple = f"[View in Swiple]({app_url}/dataset/home?dataset-id={dataset_id}&tab=expectations)"
+    view_in_swiple = f"[View in Swiple]({ui_base_url}/dataset/home?dataset-id={dataset_id}&tab=expectations)"
 
     markdown = f"{overview_table}\n\n{view_in_swiple}\n\n{results_table}"
 

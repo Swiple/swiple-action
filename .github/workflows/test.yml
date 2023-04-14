@@ -23,7 +23,8 @@ jobs:
       uses: ./
       id: swiple-action
       with:
-        app_url: https://1123-2a00-23ee-15b0-62e9-b465-e034-61d8-361a.ngrok-free.app
+        api_base_url: https://1123-2a00-23ee-15b0-62e9-b465-e034-61d8-361a.ngrok-free.app
+        ui_base_url: http://127.0.0.1:3000
         username: ${{ secrets.API_USERNAME }}
         password: ${{ secrets.API_PASSWORD }}
         dataset_id: 8ef17978-75a7-4be6-95d0-a8ab16c5f6ac
