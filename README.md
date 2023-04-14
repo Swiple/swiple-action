@@ -41,4 +41,5 @@ jobs:
         username: ${{ secrets.API_USERNAME }}
         password: ${{ secrets.API_PASSWORD }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        require_all_passed: 'true'  # OPTIONAL: Causes build to fail if any expectations fail
 ```
