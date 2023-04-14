@@ -1,5 +1,5 @@
 name: 'Swiple Data Quality Check Action'
-description: 'Automatically validate datasets with the Swiple GitHub action and receive detailed reports directly in your pull requests for seamless data quality management.'
+description: 'Automatically validate datasets with Swiple GitHub action, get detailed reports in PRs for seamless data quality management.'
 author: 'Swiple'
 branding:
   icon: 'check-circle'
