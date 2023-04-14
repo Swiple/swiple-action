@@ -29,3 +29,4 @@ jobs:
         username: ${{ secrets.API_USERNAME }}
         password: ${{ secrets.API_PASSWORD }}
         dataset_id: ${{ secrets.DATASET_ID }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

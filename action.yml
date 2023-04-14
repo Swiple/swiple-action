@@ -22,6 +22,9 @@ inputs:
   dataset_id:
     description: 'Dataset ID to validate'
     required: true
+  github_token:
+    description: 'Github token'
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -45,4 +48,4 @@ runs:
         PASSWORD: ${{ inputs.password }}
         DATASET_ID: ${{ inputs.dataset_id }}
         INPUT_PR_NUMBER: ${{ github.event.pull_request.number }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}
