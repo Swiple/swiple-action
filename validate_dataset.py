@@ -12,6 +12,7 @@ username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
 dataset_id = os.environ['DATASET_ID']
 time_zone = os.environ.get("TIME_ZONE", "US/Central")
+github_token = os.environ['GITHUB_TOKEN']
 
 session = requests.Session()
 
@@ -98,7 +99,6 @@ def format_run_time(date_string: str):
 
 
 def post_pr_comment(repo_name, pr_number, message):
-    github_token = os.environ['GITHUB_TOKEN']
     g = Github(github_token)
     repo = g.get_repo(repo_name)
     pr = repo.get_pull(pr_number)
