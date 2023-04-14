@@ -23,10 +23,8 @@ jobs:
       uses: ./
       id: swiple-action
       with:
-        api_base_url: ${{ secrets.API_BASE_URL }}
-        client_id: ${{ secrets.CLIENT_ID }}
-        client_secret: ${{ secrets.CLIENT_SECRET }}
+        app_url: https://1123-2a00-23ee-15b0-62e9-b465-e034-61d8-361a.ngrok-free.app
         username: ${{ secrets.API_USERNAME }}
         password: ${{ secrets.API_PASSWORD }}
-        dataset_id: ${{ secrets.DATASET_ID }}
+        dataset_id: 8ef17978-75a7-4be6-95d0-a8ab16c5f6ac
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

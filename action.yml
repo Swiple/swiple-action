@@ -4,14 +4,8 @@ branding:
   icon: 'check-circle'
   color: 'green'
 inputs:
-  api_base_url:
+  app_url:
     description: 'The base URL for the API'
-    required: true
-  client_id:
-    description: 'Client ID for API authentication'
-    required: true
-  client_secret:
-    description: 'Client Secret for API authentication'
     required: true
   username:
     description: 'Username for API authentication'
@@ -41,9 +35,7 @@ runs:
         ./.venv/bin/python $GITHUB_ACTION_PATH/validate_dataset.py
       shell: bash
       env:
-        API_BASE_URL: ${{ inputs.api_base_url }}
-        CLIENT_ID: ${{ inputs.client_id }}
-        CLIENT_SECRET: ${{ inputs.client_secret }}
+        app_url: ${{ inputs.api_base_url }}
         USERNAME: ${{ inputs.username }}
         PASSWORD: ${{ inputs.password }}
         DATASET_ID: ${{ inputs.dataset_id }}
