@@ -26,11 +26,6 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
         
     - name: Validate Dataset
       uses: Swiple/swiple-action@v1
