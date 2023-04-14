@@ -35,7 +35,7 @@ runs:
         ./.venv/bin/python $GITHUB_ACTION_PATH/validate_dataset.py
       shell: bash
       env:
-        app_url: ${{ inputs.api_base_url }}
+        APP_URL: ${{ inputs.api_base_url }}
         USERNAME: ${{ inputs.username }}
         PASSWORD: ${{ inputs.password }}
         DATASET_ID: ${{ inputs.dataset_id }}
