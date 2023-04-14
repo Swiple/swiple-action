@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "swiple-action"
+version = "0.1.0"
+description = "Automatically validate datasets, poll task status, and display validation results in a GitHub pull request."
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "swiple_action"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+PyGithub = "^1.58.1"
+requests = "^2.28.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

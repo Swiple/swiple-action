@@ -1,0 +1,31 @@
+name: Dataset Validation
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+
+jobs:
+  validate-dataset:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
+
+    - name: Validate Dataset
+      uses: ./
+      id: swiple-action
+      with:
+        api_base_url: ${{ secrets.API_BASE_URL }}
+        client_id: ${{ secrets.CLIENT_ID }}
+        client_secret: ${{ secrets.CLIENT_SECRET }}
+        username: ${{ secrets.API_USERNAME }}
+        password: ${{ secrets.API_PASSWORD }}
+        dataset_id: ${{ secrets.DATASET_ID }}

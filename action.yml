@@ -1,0 +1,46 @@
+name: 'Swiple Dataset Validation Action'
+description: 'A GitHub action to validate datasets and post results in the PR'
+branding:
+  icon: 'check-circle'
+  color: 'green'
+inputs:
+  api_base_url:
+    description: 'The base URL for the API'
+    required: true
+  client_id:
+    description: 'Client ID for API authentication'
+    required: true
+  client_secret:
+    description: 'Client Secret for API authentication'
+    required: true
+  username:
+    description: 'Username for API authentication'
+    required: true
+  password:
+    description: 'Password for API authentication'
+    required: true
+  dataset_id:
+    description: 'Dataset ID to validate'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - run: |
+        python -m pip install --upgrade pip
+        pip install poetry
+      shell: bash
+    - run: |
+        poetry config virtualenvs.create true
+        poetry config virtualenvs.in-project true
+        poetry install
+      shell: bash
+    - run: |
+        ./.venv/bin/python $GITHUB_ACTION_PATH/validate_dataset.py
+      shell: bash
+      env:
+        API_BASE_URL: ${{ inputs.api_base_url }}
+        CLIENT_ID: ${{ inputs.client_id }}
+        CLIENT_SECRET: ${{ inputs.client_secret }}
+        USERNAME: ${{ inputs.username }}
+        PASSWORD: ${{ inputs.password }}
+        DATASET_ID: ${{ inputs.dataset_id }}
