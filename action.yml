@@ -22,9 +22,18 @@ inputs:
   github_token:
     description: 'Github token'
     required: true
+  require_all_passed:
+    description: 'Causes build to fail if any expectations fail'
+    required: false
+    default: 'false'
+
 runs:
   using: 'composite'
   steps:
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: 3.9
     - run: |
         python -m pip install --upgrade pip
         pip install poetry
@@ -45,3 +54,4 @@ runs:
         DATASET_ID: ${{ inputs.dataset_id }}
         INPUT_PR_NUMBER: ${{ github.event.pull_request.number }}
         GITHUB_TOKEN: ${{ inputs.github_token }}
+        REQUIRE_ALL_PASSED: ${{ inputs.require_all_passed }}

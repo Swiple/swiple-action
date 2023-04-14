@@ -14,6 +14,8 @@ password = os.environ['PASSWORD']
 dataset_id = os.environ['DATASET_ID']
 time_zone = os.environ.get("TIME_ZONE", "US/Central")
 github_token = os.environ['GITHUB_TOKEN']
+require_all_passed = os.environ.get('REQUIRE_ALL_PASSED', 'false').lower() == 'true'
+
 
 session = requests.Session()
 
@@ -168,11 +170,17 @@ def main():
 
     markdown = f"{overview_table}\n\n{view_in_swiple}\n\n{results_table}"
 
-    # Post the validation results as a PR comment
-    repo_name = os.environ["GITHUB_REPOSITORY"]
-    pr_number = int(os.environ["INPUT_PR_NUMBER"])
+    try:
+        # Post the validation results as a PR comment
+        repo_name = os.environ["GITHUB_REPOSITORY"]
+        pr_number = int(os.environ["INPUT_PR_NUMBER"])
 
-    post_pr_comment(repo_name, pr_number, markdown)
+        post_pr_comment(repo_name, pr_number, markdown)
+    except ValueError:
+        print("This is not a PR, skipping PR comment")
+
+    if require_all_passed and passed_expectations_count != total_expectations_count:
+        raise Exception(f"Validation failed: {passed_expectations_count} of {total_expectations_count} expectations passed.")
 
 
 if __name__ == "__main__":

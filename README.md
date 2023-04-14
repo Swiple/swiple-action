@@ -26,11 +26,6 @@ jobs:
     steps:
     - name: Check out repository
       uses: actions/checkout@v3
-    
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: 3.9
         
     - name: Validate Dataset
       uses: Swiple/swiple-action@v1
@@ -41,4 +36,5 @@ jobs:
         username: ${{ secrets.API_USERNAME }}
         password: ${{ secrets.API_PASSWORD }}
         github_token: ${{ secrets.GITHUB_TOKEN }}
+        require_all_passed: 'true'  # OPTIONAL: Causes build to fail if any expectations fail
 ```
