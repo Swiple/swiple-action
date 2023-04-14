@@ -113,12 +113,17 @@ def main():
     validations = get_validations(dataset_id)
 
     validation_results = []
+    passed_expectations_count = 0
 
     for expectation in validations:
         if expectation.get("validations")[0]['exception_info']['exception_message']:
             status = '❗'
         else:
-            status = '✅' if expectation.get("validations")[0]['success'] else '❌'
+            if expectation.get("validations")[0]['success']:
+                status = '✅'
+                passed_expectations_count += 1
+            else:
+                status = '❌'
 
         result = {
             "expectation_type": expectation.get("expectation_type"),
@@ -130,6 +135,8 @@ def main():
         }
         validation_results.append(result)
 
+    total_expectations_count = len(validations)
+
     # Format the validation results as a table
     table_header = "| Column | Expectation | Success | Result | Documentation |\n| --- | --- | --- | --- | --- |\n"
     table_rows = [
@@ -137,7 +144,9 @@ def main():
         for result in validation_results
     ]
 
-    table = table_header + "\n".join(table_rows)
+    status_icon = "✅" if total_expectations_count == passed_expectations_count else "❌"
+    table = f"<details>\n<summary>Validation Results — {status_icon} {passed_expectations_count} of {total_expectations_count} expectations passed</summary>\n{table_header}" + "\n".join(
+        table_rows) + "\n</details>"
 
     engine = dataset["engine"]
     datasource_name = dataset["datasource_name"]
@@ -145,15 +154,16 @@ def main():
     dataset_name = dataset["dataset_name"]
     run_time = format_run_time(validations[0].get("validations")[0]["run_time"])
 
-    overview_header ="| Engine | Datasource Name | Database | Dataset Name | Run Time |\n|---|---|---|---|---|\n"
+    overview_header = "| Engine | Datasource Name | Database | Dataset Name | Run Time |\n|---|---|---|---|---|\n"
     overview_table_row = f"|{engine}|{datasource_name}|{database}|{dataset_name}|{run_time}|"
     overview_table = overview_header + overview_table_row
 
+    markdown = f"{overview_table}\n\n{table}"
+    print(markdown)
     # Post the validation results as a PR comment
     repo_name = os.environ["GITHUB_REPOSITORY"]
     pr_number = int(os.environ["INPUT_PR_NUMBER"])
-    markdown = f"## Validation Report\n---\n{overview_table}\n\n## Results\n\n{table}"
-    print(markdown)
+
     post_pr_comment(repo_name, pr_number, markdown)
 
 
