@@ -145,7 +145,7 @@ def main():
     ]
 
     status_icon = "✅" if total_expectations_count == passed_expectations_count else "❌"
-    table = f"<details>\n<summary>Validation Results — {status_icon} {passed_expectations_count} of {total_expectations_count} expectations passed</summary>\n<br/>\n{table_header}" + "\n".join(
+    table = f"<details>\n<summary>Validation Results — {status_icon} {passed_expectations_count} of {total_expectations_count} expectations passed</summary>\n<br/>\n\n{table_header}" + "\n".join(
         table_rows) + "\n</details>"
 
     engine = dataset["engine"]
