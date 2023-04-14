@@ -24,8 +24,8 @@ jobs:
       id: swiple-action
       with:
         api_base_url: ${{ secrets.API_BASE_URL }}
-        client_id: ${{ secrets.CLIENT_ID }}
-        client_secret: ${{ secrets.CLIENT_SECRET }}
+        ui_base_url: http://127.0.0.1:3000
+        dataset_id: ${{ secrets.DATASET_ID }}
         username: ${{ secrets.API_USERNAME }}
         password: ${{ secrets.API_PASSWORD }}
-        dataset_id: ${{ secrets.DATASET_ID }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}

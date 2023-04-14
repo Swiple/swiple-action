@@ -8,16 +8,18 @@ from zoneinfo import ZoneInfo
 
 
 api_base_url = os.environ['API_BASE_URL']
+ui_base_url = os.environ['UI_BASE_URL']
 username = os.environ['USERNAME']
 password = os.environ['PASSWORD']
 dataset_id = os.environ['DATASET_ID']
 time_zone = os.environ.get("TIME_ZONE", "US/Central")
+github_token = os.environ['GITHUB_TOKEN']
 
 session = requests.Session()
 
 
 def authenticate():
-    url = f"{api_base_url}/auth/login"
+    url = f"{api_base_url}/api/v1/auth/login"
     data = {
         'grant_type': 'password',
         'username': username,
@@ -28,21 +30,21 @@ def authenticate():
 
 
 def get_dataset(key):
-    url = f"{api_base_url}/datasets/{key}"
+    url = f"{api_base_url}/api/v1/datasets/{key}"
     response = session.get(url)
     response.raise_for_status()
     return response.json()
 
 
 def validate_dataset(key):
-    url = f"{api_base_url}/datasets/{key}/validate"
+    url = f"{api_base_url}/api/v1/datasets/{key}/validate"
     response = session.post(url)
     response.raise_for_status()
     return response.json()['task_id']
 
 
 def get_task(task_id):
-    url = f"{api_base_url}/tasks/{task_id}"
+    url = f"{api_base_url}/api/v1/tasks/{task_id}"
     response = session.get(url)
     response.raise_for_status()
     return response.json()
@@ -61,7 +63,7 @@ def poll_task_status(task_id):
 
 
 def get_validations(dataset_id):
-    url = f"{api_base_url}/expectations?dataset_id={dataset_id}&include_history=true&enabled=true&asc=false"
+    url = f"{api_base_url}/api/v1/expectations?dataset_id={dataset_id}&include_history=true&enabled=true&asc=false"
     response = session.get(url)
     response.raise_for_status()
     return response.json()
@@ -98,7 +100,6 @@ def format_run_time(date_string: str):
 
 
 def post_pr_comment(repo_name, pr_number, message):
-    github_token = os.environ['GITHUB_TOKEN']
     g = Github(github_token)
     repo = g.get_repo(repo_name)
     pr = repo.get_pull(pr_number)
@@ -112,13 +113,23 @@ def main():
     task = poll_task_status(task_id)
     validations = get_validations(dataset_id)
 
+    # Sort validations by run_time to get the most recent run
+    for expectation in validations:
+        expectation["validations"] = sorted(expectation["validations"], key=lambda x: x["run_time"], reverse=True)
+
+
     validation_results = []
+    passed_expectations_count = 0
 
     for expectation in validations:
         if expectation.get("validations")[0]['exception_info']['exception_message']:
             status = '❗'
         else:
-            status = '✅' if expectation.get("validations")[0]['success'] else '❌'
+            if expectation.get("validations")[0]['success']:
+                status = '✅'
+                passed_expectations_count += 1
+            else:
+                status = '❌'
 
         result = {
             "expectation_type": expectation.get("expectation_type"),
@@ -130,14 +141,18 @@ def main():
         }
         validation_results.append(result)
 
+    total_expectations_count = len(validations)
+
     # Format the validation results as a table
-    table_header = "| Column | Expectation | Success | Result | Documentation |\n| --- | --- | --- | --- | --- |\n"
-    table_rows = [
+    results_table_header = "| Column | Expectation | Success | Result | Documentation |\n| --- | --- | --- | --- | --- |\n"
+    results_table_rows = [
         f"| {result['column']} | {result['expectation_type']} | {result['success']} | {result['result_value']} | {result['documentation']} |"
         for result in validation_results
     ]
 
-    table = table_header + "\n".join(table_rows)
+    status_icon = "✅" if total_expectations_count == passed_expectations_count else "❌"
+    results_table = f"<details>\n<summary>Validation Results — {status_icon} {passed_expectations_count} of {total_expectations_count} expectations passed</summary>\n<br/>\n\n{results_table_header}" + "\n".join(
+        results_table_rows) + "\n</details>"
 
     engine = dataset["engine"]
     datasource_name = dataset["datasource_name"]
@@ -145,15 +160,18 @@ def main():
     dataset_name = dataset["dataset_name"]
     run_time = format_run_time(validations[0].get("validations")[0]["run_time"])
 
-    overview_header ="| Engine | Datasource Name | Database | Dataset Name | Run Time |\n|---|---|---|---|---|\n"
+    overview_header = "| Engine | Datasource Name | Database | Dataset Name | Run Time |\n|---|---|---|---|---|\n"
     overview_table_row = f"|{engine}|{datasource_name}|{database}|{dataset_name}|{run_time}|"
     overview_table = overview_header + overview_table_row
+
+    view_in_swiple = f"[View in Swiple]({ui_base_url}/dataset/home?dataset-id={dataset_id}&tab=expectations)"
+
+    markdown = f"{overview_table}\n\n{view_in_swiple}\n\n{results_table}"
 
     # Post the validation results as a PR comment
     repo_name = os.environ["GITHUB_REPOSITORY"]
     pr_number = int(os.environ["INPUT_PR_NUMBER"])
-    markdown = f"## Validation Report\n---\n{overview_table}\n\n## Results\n\n{table}"
-    print(markdown)
+
     post_pr_comment(repo_name, pr_number, markdown)
 
 

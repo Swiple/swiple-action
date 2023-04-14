@@ -5,13 +5,10 @@ branding:
   color: 'green'
 inputs:
   api_base_url:
-    description: 'The base URL for the API'
+    description: 'The base URL for the Swiple API'
     required: true
-  client_id:
-    description: 'Client ID for API authentication'
-    required: true
-  client_secret:
-    description: 'Client Secret for API authentication'
+  ui_base_url:
+    description: 'The base URL for the Swiple UI'
     required: true
   username:
     description: 'Username for API authentication'
@@ -21,6 +18,9 @@ inputs:
     required: true
   dataset_id:
     description: 'Dataset ID to validate'
+    required: true
+  github_token:
+    description: 'Github token'
     required: true
 runs:
   using: 'composite'
@@ -39,8 +39,9 @@ runs:
       shell: bash
       env:
         API_BASE_URL: ${{ inputs.api_base_url }}
-        CLIENT_ID: ${{ inputs.client_id }}
-        CLIENT_SECRET: ${{ inputs.client_secret }}
+        UI_BASE_URL: ${{ inputs.ui_base_url }}
         USERNAME: ${{ inputs.username }}
         PASSWORD: ${{ inputs.password }}
         DATASET_ID: ${{ inputs.dataset_id }}
+        INPUT_PR_NUMBER: ${{ github.event.pull_request.number }}
+        GITHUB_TOKEN: ${{ inputs.github_token }}

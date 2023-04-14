@@ -15,25 +15,30 @@ This GitHub action automatically validates datasets, polls task status, and disp
 To use this action, you need to add it as a step in your GitHub Actions workflow file (`.github/workflows/main.yml` or similar). Here's an example workflow:
 
 ```yaml
-name: Dataset Validation
+name: Swiple Dataset Validation
 
 on: [pull_request]
 
 jobs:
-  dataset_validation:
+  validate-dataset:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Swiple Dataset Validation
-      uses: your_github_username/swiple-action@v1
+    - name: Check out repository
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
-        api_base_url: ${{ secrets.API_BASE_URL }}
-        client_id: ${{ secrets.CLIENT_ID }}
-        client_secret: ${{ secrets.CLIENT_SECRET }}
-        username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
+        python-version: 3.9
+        
+    - name: Validate Dataset
+      uses: Swiple/swiple-action@v1
+      with:
+        api_base_url: 'https://swiple.api.yourdomain.io'
+        ui_base_url: 'https://swiple.app.yourdomain.io'
         dataset_id: 'your_dataset_id'
+        username: ${{ secrets.API_USERNAME }}
+        password: ${{ secrets.API_PASSWORD }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
 ```
