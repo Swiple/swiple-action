@@ -145,7 +145,7 @@ def main():
     ]
 
     status_icon = "✅" if total_expectations_count == passed_expectations_count else "❌"
-    table = f"<details>\n<summary>Validation Results — {status_icon} {passed_expectations_count} of {total_expectations_count} expectations passed</summary>\n\n{table_header}" + "\n".join(
+    table = f"<details>\n<summary>Validation Results — {status_icon} {passed_expectations_count} of {total_expectations_count} expectations passed</summary>\n<br/>\n{table_header}" + "\n".join(
         table_rows) + "\n</details>"
 
     engine = dataset["engine"]
@@ -159,7 +159,7 @@ def main():
     overview_table = overview_header + overview_table_row
 
     markdown = f"{overview_table}\n\n{table}"
-    print(markdown)
+
     # Post the validation results as a PR comment
     repo_name = os.environ["GITHUB_REPOSITORY"]
     pr_number = int(os.environ["INPUT_PR_NUMBER"])
